@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ethos — Argument Strength Analyzer</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  :root{
+    --bg:#0d1117;
+    --card:#161b22;
+    --muted:#9ca3af;
+    --text:#e6edf3;
+    --glass: rgba(255,255,255,0.06);
+    --radius:12px;
+    --accent: #8b5cf6;
+    --ethos: linear-gradient(90deg,#16a34a,#34d399);
+    --logos: linear-gradient(90deg,#f59e0b,#fb923c);
+    --pathos: linear-gradient(90deg,#ef4444,#fb7185);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:28px;
+  }
+
+  header.topbar{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 20px;
+    background:rgba(22,27,34,0.85);
+    border-radius:999px;
+    width:100%;
+    max-width:1200px;
+    margin:0 auto 26px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.5);
+  }
+  .brand {
+    display:flex;align-items:center;gap:12px;
+  }
+  .logo-img {
+    width:36px;height:36px;border-radius:8px;object-fit:contain;background:#0d1117;padding:4px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+  }
+  .title h1{margin:0;font-size:16px;color:var(--text)}
+  .title p{margin:0;font-size:12px;color:var(--muted)}
+
+  main.container{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    gap:36px;
+  }
+
+  .panel{
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:20px;
+    background:transparent;
+  }
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.06);
+  }
+
+  .input-area{
+    min-height:200px;
+    width:100%;
+    border-radius:10px;
+    background: #0d1117;
+    border:1px dashed rgba(255,255,255,0.08);
+    padding:16px;
+    resize:vertical;
+    font-size:14px;
+    color:var(--text);
+    outline:none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    min-height:220px;
+  }
+
+  .controls{
+    display:flex;
+    gap:12px;
+    justify-content:flex-start;
+    margin-top:14px;
+    align-items:center;
+  }
+  .btn{
+    padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:var(--card);font-weight:600;cursor:pointer;color:var(--text);
+  }
+  .btn.primary{
+    background:linear-gradient(90deg,var(--accent), #9f7aea);
+    color:white;border:none;box-shadow:0 8px 20px rgba(139,92,246,0.3);
+  }
+  .small-muted{font-size:13px;color:var(--muted)}
+
+  .analysis-title{font-weight:700;margin-bottom:6px;color:var(--text)}
+  .score-row{display:flex;flex-direction:column;gap:12px}
+  .score-item{display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .score-left{display:flex;flex-direction:column;gap:6px;flex:1}
+  .score-label{font-weight:600}
+  .score-bar{
+    height:12px;border-radius:999px;background:var(--glass);overflow:hidden;
+  }
+  .score-fill{height:100%;width:0;border-radius:999px;display:flex;align-items:center;padding-left:8px;font-size:12px;color:#fff;font-weight:700;transition:width 800ms ease;}
+  .score-value{width:36px;text-align:right;font-weight:700;color:var(--text)}
+
+  .quad-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:14px}
+  .quad-svg{width:360px;height:300px}
+  .quad-label{font-weight:700;margin-bottom:6px}
+  .quad-subtext{color:var(--muted);font-size:13px}
+
+  .sentences-card{padding:18px 18px 12px}
+  .sentences-list{max-height:340px;overflow:auto;padding-right:8px}
+  .sentence-item{display:flex;gap:12px;padding:12px 6px;border-bottom:1px dashed rgba(255,255,255,0.05)}
+  .s-text{flex:1;font-size:14px;color:var(--text)}
+  .s-stats{width:280px;display:flex;flex-direction:column;gap:6px}
+  .mini-bar{height:8px;border-radius:999px;background:var(--glass);overflow:hidden}
+  .mini-fill{height:100%;width:0;border-radius:999px}
+
+  .meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .badge{font-size:12px;padding:6px 8px;border-radius:999px;background:#0d1117;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+  .muted{color:var(--muted);font-size:13px}
+
+  @media (max-width:980px){
+    .panel{grid-template-columns:1fr}
+    .quad-svg{width:320px;height:260px}
+    .s-stats{width:100%}
+  }
+  #quadSVG text {
+  fill: #ffffff;
+  font-weight: 600;}
+</style>
+</head>
+<body>
+  <header class="topbar" aria-hidden="false">
+    <div class="brand">
+      <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="title">
+        <h1 style="font-size:16px;margin-bottom:2px">ETHOS</h1>
+        <p style="margin:0;font-size:12px;color:var(--muted)">Argument Strength Analyzer</p>
+      </div>
+    </div>
+    <div style="margin-left:auto;color:var(--muted);font-size:13px">AI - Persuasive Writing</div>
+  </header>
+
+  <main class="container" role="main">
+    <div class="panel">
+      <section class="card" aria-labelledby="inputLabel">
+        <h2 id="inputLabel" style="margin:0 0 8px 0">Type or paste to analyze your text</h2>
+        <textarea id="inputText" class="input-area" placeholder="Type here" rows="7"></textarea>
+
+        <div class="controls">
+          <label style="display:inline-flex;align-items:center;gap:8px;">
+            <input id="fileInput" type="file" accept=".txt,.docx,.doc" style="display:none" />
+            <button class="btn" id="uploadBtn" title="Upload document">📎 Upload Doc</button>
+          </label>
+          <button id="analyzeBtn" class="btn primary">Analyze Text</button>
+        </div>
+      </section>
+
+      <aside class="card" aria-labelledby="resultsLabel">
+        <h3 id="resultsLabel" class="analysis-title">Analysis Results</h3>
+
+        <div class="score-row" id="overallScores">
+          <!-- initial zeros rendered by JS -->
+        </div>
+
+        <div class="quad-wrap" aria-hidden="false">
+          <svg id="quadSVG" class="quad-svg" viewBox="0 0 360 300" role="img" aria-label="Quadrilateral showing Factual Consistency, Formality, Logos, Pathos"></svg>
+          <div class="quad-subtext muted">Axes: Factual Consistency (top), Formality (right), Logos (bottom), Pathos (left). Values shown as percentages.</div>
+        </div>
+      </aside>
+    </div>
+
+    <div style="height:8px"></div>
+
+    <section class="card sentences-card">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <h3 style="margin:0">Sentence - By - Sentence Analysis</h3>
+        <div class="muted">Detailed breakdown</div>
+      </div>
+      <div class="sentences-list" id="sentencesList" style="margin-top:12px">
+      </div>
+    </section>
+  </main>
+
+<script src="script.js"></script>
+</body>
+</html>
