@@ -69,6 +69,7 @@ The system splits the analysis into three distinct processing pipelines, effecti
 ├── index.html           # Frontend Dashboard
 ├── script.js            # Visualization Logic (Chart.js / Vanilla JS)
 └── requirements.txt     # Dependencies
+```
 
 🚀 Getting Started
 Prerequisites
@@ -87,10 +88,5 @@ pip install requirements.txt
 3. Run the Application
 python final.py
 
-📊 Sample Analysis
-Metric,Score,Insight
-Pathos,8.5/10,High emotional intensity; heavy use of subjective adjectives.
-Ethos,7.2/10,"Strong ""We"" vs ""I"" ratio; inclusive leadership style."
-Logos,6.4/10,"Moderate coherence; detected 1 potential ""Slippery Slope"" fallacy."
-Overall,7.4/10,Highly Persuasive
+
 
